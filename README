@@ -1,0 +1,45 @@
+A Symfony-Compatible Swiftmailer backend for Postmark (postmarkapp.com)
+
+USAGE
+
+Any Swiftmailer fan can use this to deliver email, you don't absolutely need to be using Symfony. You could use it with Symfony 2.0 as well, but here's how we use it with Symfony 1.4.
+
+Configure factories.yml to use Postmark when you use Swiftmailer in a normal fashion, like this:
+
+mailer:
+  param:
+    delivery_strategy: realtime
+    transport:
+      class: sfPostmarkSwiftmailer
+      param:
+        # NOTE: must also be updated in app.yml
+        postmarkApiToken: 'GET-YOUR-OWN'
+        from: 'admin@example.com'
+        # postmarkUri could be overridden if necessary
+
+Both the original class and the sfPostmarkSwiftmailer subclass are released under the BSD open source license.
+
+KNOWN ISSUES
+
+The Postmark mailer assumes that the "main" body of the message (setBody()) is the plaintext version. Just make sure that is the case and use setBody() for the plaintext and addPart() for the HTML (if any):
+
+$message->setBody($text, 'text/plain');
+$message->addPart($html, 'text/html');
+
+CREDITS
+
+The Swift_PostmarkTransport class found in the lib/postmark-swiftmailer file is originally by "oystein," as found here:
+
+http://code.google.com/p/postmark-swiftmailer/
+
+The original author did not choose to give much information but did select the BSD open source license.
+
+Since that code has not been updated in a long time, there is one modification by P'unk Avenue found here that is not included there. It is a fix for a problem with setting the Postmark "from address" signature:
+
+http://code.google.com/p/postmark-swiftmailer/issues/detail?id=1
+
+The subclass sfPostmarkSwiftmailer, found in the main lib/ folder, was written by Tom Boutell of P'unk Avenue (tom@punkave.com). It adds full Symfony compatibility by implementing dependency injection methods allowing the mailer to be configured via factories.yml. We did this work to help build Apostrophe: http://apostrophenow.com
+
+LICENSE
+
+Both the original postmark_swiftmailer code and the sfPostmarkSwiftmailer subclass are released under the BSD license.
